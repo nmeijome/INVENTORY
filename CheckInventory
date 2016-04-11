@@ -1,0 +1,58 @@
+////PLEASE DO NOT ALTER THIS CODE. (Fully functional inventory check with email update when low on product packaging.)
+
+
+//The function below checks Inventory to see if any values in column F are less than value in corresponding row of column G and if so turns 
+//the cell red. (This check is triggered by any form submission or any change made to spreadsheet.
+
+function SetCellsRed() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('INVENTORY');
+  var range = sheet.getRange("H3:J30");
+  var values = range.getValues();
+
+  for (var i = 0; i < values.length; i++) {
+    if (values[i][1]<values[i][2]) {
+      sheet.getRange(i+3, 9).setBackground('red');
+    }
+  else sheet.getRange(i+3,9).setBackground('white');
+  }
+  SpreadsheetApp.flush();
+};
+
+//The function below will check the Quantity column bi-weekly to see if any cells are red and triggers sendEmail function.
+
+function CheckforRedCells() {
+  var sheet = SpreadsheetApp.getActive().getSheetByName('INVENTORY');
+  var range = sheet.getRange("I3:I30");
+  var values = range.getValues();
+  var bgColors = range.getBackgrounds();
+  var flag = false;
+  var email = "bryan@thewercshop.com";
+  var cc = "nmeijome@gmail.com, gjarvis86@gmail.com, jbprocessing1@gmail.com";
+  
+  
+  for (var i in bgColors) {
+    if (bgColors[i] == ('#ff0000')) {
+    flag = true;}
+  }
+  SpreadsheetApp.flush();
+  if(flag==true) sendEmail(email,cc);
+};
+
+
+//The function below is triggered by the check function and sends email with xlsx attachment of Inventory to see with items are low and 
+//need to be reordered soon.
+
+function sendEmail(email,cc) {
+  
+  var sheetName = "INVENTORY";
+  var subject = "TWO HEADS - Current Qnty of some items have gone below Minimum Qnty Required";
+  var body = "This is an automated email to notify you that 'Current Qnty' of some items have gone below 'Minimum Qnty Required'. Please, check the attachment.";
+  var email = "bryan@thewercshop.com";
+  var cc = "nmeijome@gmail.com, gjarvis86@gmail.com, jbprocessing1@gmail.com";
+  var requestData = {"method": "GET", "oAuthServiceName": "google", "oAuthUseToken": "always"};
+  var url = "https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key=1dDyVn7zQVJyo3sbTJZIsGBSsXkShIUIGF2S0mvnMmWc";
+  var result = UrlFetchApp.fetch(url , requestData);  
+  var contents = result.getContent();
+  
+  MailApp.sendEmail(email, subject ,body, {cc:cc,attachments:[{fileName:sheetName+".xlsx", content:contents, mimeType:"application//xls"}]}); 
+};
