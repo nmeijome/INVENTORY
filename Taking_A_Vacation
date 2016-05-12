@@ -33,3 +33,5 @@ def trip_cost(city, days, spending_money):
     nights = days
     total = hotel_cost(nights) + plane_ride_cost(city) + rental_car_cost(days) + spending_money
     return total
+
+print trip_cost("Los Angeles", 5, 600)
