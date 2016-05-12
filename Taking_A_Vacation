@@ -1,25 +1,35 @@
+import math
+
+
 def hotel_cost(nights):
     return 140 * nights
 
     
 def plane_ride_cost(city):
     if city == "Charlotte":
-        return 183
+        cost = 183
+        return cost
     if city == "Tampa":
-        return 220
+        cost = 220
+        return cost
     if city == "Pittsburgh":
-        return 222
+        cost = 222
+        return cost
     if city == "Los Angeles":
-        return 475
-    else:
-        return "None"
-        
+        cost = 475
+        return cost
+
 def rental_car_cost(days):
+    cost = 40 * days
     if days >= 7:
-        return (40 * days) - 50
-    elif days >= 3 and days <= 7:
-        return (40 * days) - 20
-    else:
-        return (40 * days)
-        
-def trip_cost
+        cost -= 50
+    elif days >= 3:
+        cost -=20
+    return cost
+    
+spending_money = 500
+    
+def trip_cost(city, days, spending_money):
+    nights = days
+    total = hotel_cost(nights) + plane_ride_cost(city) + rental_car_cost(days) + spending_money
+    return total
